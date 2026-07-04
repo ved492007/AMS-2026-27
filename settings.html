@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings & Complaints - Attendance System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary-color: #4f46e5; --secondary-color: #06b6d4; --dark-color: #1e293b; --light-color: #f8fafc; --danger-color: #ef4444; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--light-color); color: var(--dark-color); }
+        nav { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        nav .logo { font-size: 24px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        nav ul { display: flex; list-style: none; gap: 20px; }
+        nav ul li a { color: white; text-decoration: none; font-weight: 500; padding: 8px 16px; border-radius: 20px; transition: 0.3s; }
+        nav ul li a:hover, nav ul li a.active { background: rgba(255, 255, 255, 0.2); }
+        .container { max-width: 1200px; margin: 30px auto; padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); height: fit-content; }
+        h2 { margin-bottom: 20px; color: var(--primary-color); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; }
+        button { background: var(--primary-color); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; transition: 0.3s; margin-bottom: 10px; }
+        .btn-del { background: var(--danger-color); padding: 2px 8px; font-size: 12px; border-radius: 4px; color: white; cursor: pointer; border: none; }
+        .table-wrapper { margin-top: 20px; max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background-color: #f1f5f9; position: sticky; top: 0; }
+        .link { color: var(--primary-color); font-weight: bold; cursor: pointer; text-decoration: underline; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
+        .modal-content { background: white; margin: 10% auto; padding: 25px; border-radius: 12px; width: 400px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo"><i class="fas fa-school"></i> AMS 2026-27</div>
+        <ul>
+            <li><a href="home.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="index-page.html"><i class="fas fa-list"></i> Index Page</a></li>
+            <li><a href="settings.html" class="active"><i class="fas fa-cogs"></i> Settings & Complaints</a></li>
+            <li><a href="index.html" style="background: var(--danger-color); border-radius: 20px;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="card">
+            <h2><i class="fas fa-user-shield"></i> Admin Settings</h2>
+            <div class="form-group"><label>Admin Username:</label><input type="text" id="adminUser"></div>
+            <div class="form-group"><label>Password:</label><input type="password" id="adminPass"></div>
+            <button onclick="saveAdmin()" style="background-color: var(--secondary-color);">Add / Update Admin</button>
+            <div class="table-wrapper"><table><thead><tr><th>User</th><th>Pass</th><th>Action</th></tr></thead><tbody id="adminTableBody"></tbody></table></div>
+        </div>
+        <div class="card">
+            <h2><i class="fas fa-exclamation-triangle"></i> Student Complaints</h2>
+            <div class="form-group"><label>Name / Roll No:</label><input type="text" id="studentName"></div>
+            <div class="form-group"><label>Complaint Details:</label><textarea id="complaintDetails"></textarea></div>
+            <button onclick="saveComplaint()" style="background-color: var(--danger-color);">Submit Complaint</button>
+            <div class="table-wrapper"><table><thead><tr><th>Student</th><th>Action</th></tr></thead><tbody id="complaintTableBody"></tbody></table></div>
+        </div>
+    </div>
+    <div id="compModal" class="modal"><div class="modal-content"><h3>Complaint Details</h3><p id="modalBody" style="margin: 15px 0;"></p><button onclick="document.getElementById('compModal').style.display='none'">Close</button></div></div>
+    <script>
+        window.onload = () => { loadAdminsTable(); loadComplaintsTable(); };
+        function saveAdmin() { 
+            let u = document.getElementById('adminUser').value.trim();
+            let p = document.getElementById('adminPass').value.trim();
+            if(!u || !p) return alert("Fill fields!");
+            let admins = JSON.parse(localStorage.getItem('savedAdmins')) || [];
+            let idx = admins.findIndex(a => a.user === u);
+            if(idx > -1) admins[idx].pass = p; else admins.push({user: u, pass: p});
+            localStorage.setItem('savedAdmins', JSON.stringify(admins));
+            loadAdminsTable();
+        }
+        function loadAdminsTable() { 
+            let admins = JSON.parse(localStorage.getItem('savedAdmins')) || [];
+            let html = `<tr><td>admin</td><td>password</td><td>Default</td></tr>`;
+            admins.forEach((a, i) => html += `<tr><td>${a.user}</td><td>${a.pass}</td><td><button class="btn-del" onclick="delAdmin(${i})">Del</button></td></tr>`);
+            document.getElementById('adminTableBody').innerHTML = html;
+        }
+        function delAdmin(i) { let a = JSON.parse(localStorage.getItem('savedAdmins')); a.splice(i, 1); localStorage.setItem('savedAdmins', JSON.stringify(a)); loadAdminsTable(); }
+        function saveComplaint() {
+            let n = document.getElementById('studentName').value.trim();
+            let t = document.getElementById('complaintDetails').value.trim();
+            if(!n || !t) return alert("Fill all!");
+            let c = JSON.parse(localStorage.getItem('studentComplaints')) || [];
+            c.push({student: n, info: t});
+            localStorage.setItem('studentComplaints', JSON.stringify(c));
+            loadComplaintsTable();
+        }
+        function loadComplaintsTable() {
+            let c = JSON.parse(localStorage.getItem('studentComplaints')) || [];
+            let html = '';
+            c.forEach((item, i) => html += `<tr><td><span class="link" onclick="viewComp('${item.info}')">${item.student}</span></td><td><button class="btn-del" onclick="delComp(${i})">Del</button></td></tr>`);
+            document.getElementById('complaintTableBody').innerHTML = html;
+        }
+        function viewComp(info) { document.getElementById('modalBody').innerText = info; document.getElementById('compModal').style.display = 'block'; }
+        function delComp(i) { let c = JSON.parse(localStorage.getItem('studentComplaints')); c.splice(i, 1); localStorage.setItem('studentComplaints', JSON.stringify(c)); loadComplaintsTable(); }
+    </script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index - Attendance System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #06b6d4;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --danger-color: #ef4444;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--light-color); color: var(--dark-color); }
+        
+        nav { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        nav .logo { font-size: 24px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        nav ul { display: flex; list-style: none; gap: 20px; }
+        nav ul li a { color: white; text-decoration: none; font-weight: 500; padding: 8px 16px; border-radius: 20px; transition: 0.3s; }
+        nav ul li a:hover, nav ul li a.active { background: rgba(255, 255, 255, 0.2); }
+        
+        .container { max-width: 1200px; margin: 30px auto; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        
+        .section-header-box { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+        .section-header-box h2 { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        
+        .calendar-container { display: flex; align-items: center; gap: 10px; background: #f1f5f9; padding: 8px 15px; border-radius: 8px; border: 1px solid #cbd5e1; }
+        .calendar-container label { font-weight: 600; font-size: 14px; color: var(--primary-color); }
+        .calendar-container input[type="date"] { padding: 5px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; cursor: pointer; background: #fff; font-weight: 500; }
+
+        h2 { margin-bottom: 20px; color: var(--primary-color); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px; }
+        .feature-btn { background: white; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; border: 2px solid #e2e8f0; transition: 0.3s; }
+        .feature-btn:hover { border-color: var(--primary-color); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .feature-btn i { font-size: 30px; color: var(--primary-color); margin-bottom: 10px; }
+        
+        .dynamic-box { display: none; margin-top: 30px; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-group label .required-star { color: var(--danger-color); font-weight: bold; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; }
+        .form-group textarea { resize: vertical; height: 43px; }
+        
+        button { background: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        button:hover { opacity: 0.9; }
+        
+        .class-row-container { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .class-folder { background: #f1f5f9; padding: 15px; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; flex-grow: 1; }
+        .class-folder:hover { background: #e2e8f0; }
+        .btn-delete-class { background: var(--danger-color); color: white; border: none; padding: 15px 18px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; height: 54px; }
+        .btn-delete-class:hover { opacity: 0.8; transform: scale(1.02); }
+        
+        .student-list-box { display: none; padding: 15px; margin-bottom: 15px; border-left: 3px solid var(--primary-color); background: #fff; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); border-radius: 0 8px 8px 0; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; }
+        table, th, td { border: 1px solid #e2e8f0; }
+        th, td { padding: 12px; text-align: left; }
+        th { background-color: #f8fafc; color: var(--dark-color); font-weight: 600; }
+        
+        .roll-link { color: var(--primary-color); font-weight: bold; text-decoration: underline; cursor: pointer; display: block; }
+        .roll-link:hover { color: var(--secondary-color); }
+
+        .status-btn-group { display: flex; gap: 8px; }
+        .btn-status { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; border: 1px solid #cbd5e1; cursor: pointer; background: #f8fafc; color: #64748b; transition: 0.2s; }
+        
+        .btn-present:hover { border-color: var(--success-color); color: var(--success-color); }
+        .btn-absent:hover { border-color: var(--danger-color); color: var(--danger-color); }
+        .btn-present.active { background-color: var(--success-color); color: white; border-color: var(--success-color); }
+        .btn-absent.active { background-color: var(--danger-color); color: white; border-color: var(--danger-color); }
+        
+        .reason-input { width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; transition: 0.2s; color: #334155; }
+        .reason-input:disabled { background-color: #f1f5f9; cursor: not-allowed; border-color: #e2e8f0; color: #94a3b8; }
+        
+        .student-box-label { font-size: 12px; color: var(--primary-color); font-weight: 600; margin-bottom: 5px; display: block; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+        .modal-content { background-color: #fff; margin: 5% auto; padding: 25px; border-radius: 12px; width: 90%; max-width: 550px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); animation: zoomIn 0.3s ease; }
+        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px; }
+        .modal-header h3 { color: var(--primary-color); font-size: 20px; }
+        .close-modal { color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .close-modal:hover { color: var(--danger-color); }
+        
+        .detail-row { display: flex; margin-bottom: 12px; border-bottom: 1px dashed #f1f5f9; padding-bottom: 8px; align-items: center; }
+        .detail-label { width: 35%; font-weight: 600; color: #64748b; }
+        .detail-value { width: 65%; color: var(--dark-color); font-weight: 500; }
+        
+        .edit-input { width: 100%; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+        .modal-footer-btns { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px; }
+        .footer-right-group { display: flex; gap: 10px; }
+        .btn-edit-trigger { background: var(--warning-color); }
+        .btn-save-trigger { background: var(--success-color); }
+        .btn-cancel-trigger { background: #64748b; }
+        .btn-delete-student { background: var(--danger-color); }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo"><i class="fas fa-school"></i> AMS 2026-27</div>
+        <ul>
+            <li><a href="home.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="index-page.html" class="active"><i class="fas fa-list"></i> Index Page</a></li>
+            <li><a href="settings.html"><i class="fas fa-cogs"></i> Settings & Complaints</a></li>
+            <li><a href="index.html" style="background: var(--danger-color); border-radius: 20px;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h2><i class="fas fa-folder-open"></i> Index Management Menu</h2>
+            
+            <div class="features-grid">
+                <div class="feature-btn" onclick="showSection('all-classes-box')">
+                    <i class="fas fa-users"></i>
+                    <h3>All Classes</h3>
+                </div>
+                <div class="feature-btn" onclick="showSection('add-student-box')">
+                    <i class="fas fa-user-plus"></i>
+                    <h3>Add Student</h3>
+                </div>
+                <div class="feature-btn" onclick="showSection('add-class-box')">
+                    <i class="fas fa-plus-square"></i>
+                    <h3>Add Class</h3>
+                </div>
+                <div class="feature-btn" onclick="alert('Monthly Report Generated successfully!')">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Monthly Report</h3>
+                </div>
+                <div class="feature-btn" onclick="alert('Yearly Report Generated successfully!')">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Yearly Report</h3>
+                </div>
+            </div>
+        </div>
+
+        <div id="add-class-box" class="card dynamic-box">
+            <h2><i class="fas fa-plus-square"></i> Add New Class</h2>
+            <div class="form-group">
+                <label>Class Name: <span style="color:red; font-weight:bold;">*</span></label>
+                <input type="text" id="classNameInput" placeholder="e.g., Class 10-A, Class 11-B">
+            </div>
+            <button onclick="saveClass()">Save Class</button>
+        </div>
+
+        <div id="add-student-box" class="card dynamic-box">
+            <h2><i class="fas fa-user-plus"></i> Add New Student (All Fields Mandatory)</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Registration Number: <span class="required-star">*</span></label>
+                    <input type="text" id="regNoInput" placeholder="e.g., REG10254">
+                </div>
+                <div class="form-group">
+                    <label>Student Full Name: <span class="required-star">*</span></label>
+                    <input type="text" id="studentNameInput" placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label>Roll Number: <span class="required-star">*</span></label>
+                    <input type="number" id="rollNoInput" placeholder="Enter roll number">
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Select Class: <span class="required-star">*</span></label>
+                    <select id="studentClassSelect"></select>
+                </div>
+                <!-- MOBILE INPUT MODIFIED FOR 10 DIGIT LIMITATION -->
+                <div class="form-group">
+                    <label>Mobile Number: <span class="required-star">*</span></label>
+                    <input type="text" id="mobileInput" placeholder="Enter 10 digit number" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth (DOB): <span class="required-star">*</span></label>
+                    <input type="date" id="dobInput">
+                </div>
+            </div>
+            <div class="form-grid" style="grid-template-columns: 1fr;">
+                <div class="form-group">
+                    <label>Email Address: <span class="required-star">*</span></label>
+                    <input type="email" id="emailInput" placeholder="example@mail.com">
+                </div>
+                <div class="form-group">
+                    <label>Residential Address: <span class="required-star">*</span></label>
+                    <textarea id="addressInput" placeholder="Enter full permanent address..."></textarea>
+                </div>
+            </div>
+            <button onclick="saveStudent()">Save Student</button>
+        </div>
+
+        <div id="all-classes-box" class="card dynamic-box">
+            <div class="section-header-box">
+                <h2><i class="fas fa-users"></i> All Registered Classes</h2>
+                
+                <div class="calendar-container">
+                    <label for="attendanceDate"><i class="fas fa-calendar-day"></i> Select Date:</label>
+                    <input type="date" id="attendanceDate" min="2026-01-01" onchange="onDateChanged(this.value)">
+                </div>
+            </div>
+            <p style="color: #64748b; margin-bottom: 15px;">Click on any class folder to mark status logs. Use the red trash icon to delete an entire class.</p>
+            <div id="classesDisplayList"></div>
+        </div>
+    </div>
+
+    <div id="studentDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-graduate"></i> Student Profile</h3>
+                <span class="close-modal" onclick="closeDetailsModal()">&times;</span>
+            </div>
+            <div id="modalDetailsBody"></div>
+            <div class="modal-footer-btns" id="modalFooter"></div>
+        </div>
+    </div>
+
+    <script>
+        let openFolders = {};
+
+        window.onload = function() {
+            let today = new Date();
+            let yyyy = today.getFullYear();
+            let mm = String(today.getMonth() + 1).padStart(2, '0');
+            let dd = String(today.getDate()).padStart(2, '0');
+            
+            let formattedToday = `${yyyy}-${mm}-${dd}`;
+            let datePicker = document.getElementById('attendanceDate');
+            
+            if(datePicker) {
+                datePicker.value = formattedToday;
+                datePicker.max = formattedToday; 
+            }
+        };
+
+        function onDateChanged(selectedDate) {
+            let today = new Date();
+            let selected = new Date(selectedDate);
+            if (selected > today) {
+                alert("Error: Future dates are not allowed!");
+                let yyyy = today.getFullYear();
+                let mm = String(today.getMonth() + 1).padStart(2, '0');
+                let dd = String(today.getDate()).padStart(2, '0');
+                document.getElementById('attendanceDate').value = `${yyyy}-${mm}-${dd}`;
+                return;
+            }
+            viewClassesOnly();
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('.dynamic-box').forEach(box => box.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+            if(id === 'add-student-box') { updateClassDropdown(); }
+            if(id === 'all-classes-box') { viewClassesOnly(); }
+        }
+
+        function saveClass() {
+            let className = document.getElementById('classNameInput').value.trim();
+            if(!className) { alert("Please enter a class name!"); return; }
+
+            let classes = JSON.parse(localStorage.getItem('attendanceClasses')) || [];
+            if(classes.includes(className)) { alert("This class already exists!"); return; }
+
+            classes.push(className);
+            localStorage.setItem('attendanceClasses', JSON.stringify(classes));
+            alert(`Class "${className}" Added Successfully!`);
+            document.getElementById('classNameInput').value = '';
+        }
+
+        function deleteClass(className, folderId) {
+            if(confirm(`Are you absolutely sure you want to delete "${className}"? All students under this class will also be permanently deleted!`)) {
+                let classes = JSON.parse(localStorage.getItem('attendanceClasses')) || [];
+                classes = classes.filter(cls => cls !== className);
+                localStorage.setItem('attendanceClasses', JSON.stringify(classes));
+
+                let students = JSON.parse(localStorage.getItem('attendanceStudents')) || [];
+                students = students.filter(st => st.className !== className);
+                localStorage.setItem('attendanceStudents', JSON.stringify(students));
+
+                delete openFolders[folderId];
+
+                alert(`Class "${className}" and its associated students have been deleted successfully.`);
+                viewClassesOnly();
+            }
+        }
+
+        function updateClassDropdown() {
+            let select = document.getElementById('studentClassSelect');
+            select.innerHTML = '';
+            let classes = JSON.parse(localStorage.getItem('attendanceClasses')) || [];
+
+            if(classes.length === 0) {
+                select.innerHTML = '<option value="">No Classes Found! Add a class first.</option>';
+                return;
+            }
+            classes.forEach(cls => { select.innerHTML += `<option value="${cls}">${cls}</option>`; });
+        }
+
+        function saveStudent() {
+            let regNo = document.getElementById('regNoInput').value.trim();
+            let name = document.getElementById('studentNameInput').value.trim();
+            let rollNo = document.getElementById('rollNoInput').value.trim();
+            let selectedClass = document.getElementById('studentClassSelect').value;
+            let mobile = document.getElementById('mobileInput').value.trim();
+            let dob = document.getElementById('dobInput').value;
+            let email = document.getElementById('emailInput').value.trim();
+            let address = document.getElementById('addressInput').value.trim();
+
+            if(!regNo || !name || !rollNo || !selectedClass || !mobile || !dob || !email || !address) { 
+                alert("Error: All fields are mandatory! Please fill in every field before submitting."); 
+                return; 
+            }
+
+            // STRICT 10 DIGIT CHECK FOR MOBILE NUMBER
+            if(mobile.length !== 10) {
+                alert("Error: Mobile number must be exactly 10 digits long!");
+                return;
+            }
+
+            let students = JSON.parse(localStorage.getItem('attendanceStudents')) || [];
+            let studentId = 'STUD_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+
+            students.push({ 
+                id: studentId,
+                regNo: regNo,
+                name: name, 
+                roll: rollNo, 
+                className: selectedClass,
+                mobile: mobile,
+                dob: dob,
+                email: email,
+                address: address
+            });
+            localStorage.setItem('attendanceStudents', JSON.stringify(students));
+
+            alert(`Student "${name}" registered successfully!`);
+            
+            document.getElementById('regNoInput').value = '';
+            document.getElementById('studentNameInput').value = '';
+            document.getElementById('rollNoInput').value = '';
+            document.getElementById('mobileInput').value = '';
+            document.getElementById('dobInput').value = '';
+            document.getElementById('emailInput').value = '';
+            document.getElementById('addressInput').value = '';
+        }
+
+        function viewClassesOnly() {
+            let container = document.getElementById('classesDisplayList');
+            let classes = JSON.parse(localStorage.getItem('attendanceClasses')) || [];
+            let students = JSON.parse(localStorage.getItem('attendanceStudents')) || [];
+            let targetDate = document.getElementById('attendanceDate').value;
+            
+            let attendanceRecords = JSON.parse(localStorage.getItem('dailyAttendanceLogs')) || {};
+            let currentDayRecords = attendanceRecords[targetDate] || {};
+
+            if(classes.length === 0) {
+                container.innerHTML = "<p style='color:#ef4444;'>No classes found. Add a class first!</p>";
+                return;
+            }
+
+            let html = "";
+            classes.forEach((cls, index) => {
+                let classStudents = students.filter(st => st.className === cls);
+                let folderId = `students-of-${index}`;
+                let displayState = openFolders[folderId] ? "block" : "none";
+                
+                html += `
+                    <div class="class-row-container">
+                        <div class="class-folder" onclick="toggleStudentList('${folderId}')">
+                            <span><i class="fas fa-folder" style="color: #eab308; margin-right: 10px;"></i> ${cls}</span>
+                            <span style="font-size: 14px; color: #64748b;">${classStudents.length} Students <i class="fas fa-chevron-down" style="margin-left: 5px;"></i></span>
+                        </div>
+                        <button class="btn-delete-class" title="Delete Entire Class" onclick="deleteClass('${cls}', '${folderId}')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                    <div id="${folderId}" class="student-list-box" style="display: ${displayState};">
+                `;
+
+                if(classStudents.length === 0) {
+                    html += `<p style="color:#94a3b8; font-size:14px;">No students registered in this class yet.</p>`;
+                } else {
+                    html += `<table>
+                                <tr>
+                                    <th style="width: 12%;">Roll No</th>
+                                    <th style="width: 28%;">Student Name</th>
+                                    <th style="width: 25%;">Attendance Status</th>
+                                    <th style="width: 35%;">Absent Reason</th>
+                                </tr>`;
+                    
+                    classStudents.forEach(st => {
+                        let uniqueKey = st.id;
+                        let studentLog = currentDayRecords[uniqueKey] || { status: '', reason: '' };
+                        
+                        let isPresentActive = studentLog.status === 'Present' ? 'active' : '';
+                        let isAbsentActive = studentLog.status === 'Absent' ? 'active' : '';
+                        let isReasonDisabled = studentLog.status === 'Absent' ? '' : 'disabled';
+
+                        html += `<tr>
+                                    <td><span class="roll-link" onclick="openDetailsModal('${st.id}')">${st.roll}</span></td>
+                                    <td><strong>${st.name}</strong></td>
+                                    <td>
+                                        <div class="status-btn-group">
+                                            <button class="btn-status btn-present ${isPresentActive}" onclick="setAttendanceStatus('${uniqueKey}', 'Present')">Present</button>
+                                            <button class="btn-status btn-absent ${isAbsentActive}" onclick="setAttendanceStatus('${uniqueKey}', 'Absent')">Absent</button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="student-box-label">Reason for ${st.name}:</span>
+                                        <input type="text" 
+                                               id="reason-${uniqueKey}" 
+                                               class="reason-input" 
+                                               placeholder="Type reason here..." 
+                                               value="${studentLog.reason || ''}" 
+                                               ${isReasonDisabled} 
+                                               onchange="saveAbsentReason('${uniqueKey}', this.value)">
+                                    </td>
+                                 </tr>`;
+                    });
+                    html += `</table>`;
+                }
+                html += `</div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function openDetailsModal(studentId) {
+            let students = JSON.parse(localStorage.getItem('attendanceStudents')) || [];
+            let st = students.find(item => item.id === studentId);
+            if(!st) { alert("Student details not found!"); return; }
+
+            let bodyHtml = `
+                <div class="detail-row"><div class="detail-label">Registration No:</div><div class="detail-value" style="font-weight:700; color:var(--secondary-color);">${st.regNo}</div></div>
+                <div class="detail-row"><div class="detail-label">Name:</div><div class="detail-value" style="color:var(--primary-color)">${st.name}</div></div>
+                <div class="detail-row"><div class="detail-label">Roll No:</div><div class="detail-value">${st.roll}</div></div>
+                <div class="detail-row"><div class="detail-label">Class:</div><div class="detail-value">${st.className}</div></div>
+                <div class="detail-row"><div class="detail-label">Mobile No:</div><div class="detail-value">${st.mobile}</div></div>
+                <div class="detail-row"><div class="detail-label">DOB:</div><div class="detail-value">${st.dob}</div></div>
+                <div class="detail-row"><div class="detail-label">Email:</div><div class="detail-value">${st.email}</div></div>
+                <div class="detail-row"><div class="detail-label">Address:</div><div class="detail-value">${st.address}</div></div>
+            `;
+            
+            let footerHtml = `
+                <button class="btn-delete-student" onclick="deleteStudent('${st.id}')"><i class="fas fa-user-slash"></i> Delete Student</button>
+                <div class="footer-right-group">
+                    <button class="btn-edit-trigger" onclick="switchModalToEditMode('${st.id}')"><i class="fas fa-edit"></i> Edit Profile</button>
+                </div>
+            `;
+
+            document.getElementById('modalDetailsBody').innerHTML = bodyHtml;
+            document.getElementById('modalFooter').innerHTML = footerHtml;
+            document.getElementById('studentDetailsModal').style.display = 'block';
+        }
+
+        function deleteStudent(studentId) {
+            if(confirm("Are you sure you want to delete this student profile permanently?")) {
+                let students = JSON.parse(localStorage.getItem('attendanceStudents')) || [];
+                students = students.filter(item => item.id !== studentId);
+                localStorage.setItem('attendanceStudents', JSON.stringify(students));
+                
+                alert("Student profile deleted successfully.");
+                closeDetailsModal();
+                viewClassesOnly();
+            }
+        }
+
+        function switchModalToEditMode(studentId) {
+            let students = JSON.parse(localStorage.getItem('attendanceStudents')) || [];
+            let classes = JSON.parse(localStorage.getItem('attendanceClasses')) || [];
+            let st = students.find(item => item.id === studentId);
+
+            let classOptionsHtml = "";
+            classes.forEach(cls => {
+                let selected = (cls === st.className) ? 'selected' : '';
+                classOptionsHtml += `<option value="${cls}" ${selected}>${cls}</option>`;
+            });
+
+            // EDIT PROFILE MODE MOBILE INPUT MODIFIED WITH 10 DIGIT LIMIT
+            let editHtml = `
+                <div class="detail-row"><div class="detail-label">Registration No *:</div><div class="detail-value"><input type="text" id="editRegNo" class="edit-input" value="${st.regNo}"></div></div>
+                <div class="detail-row"><div class="detail-label">Name *:</div><div class="detail-value"><input type="text" id="editName" class="edit-input" value="${st.name}"></div></div>
+                <div class="detail-row"><div class="detail-label">Roll No *:</div><div class="detail-value"><input type="number" id="editRoll" class="edit-input" value="${st.roll}"></div></div>
+                <div class="detail-row"><div class="detail-label">Class *:</div><div class="detail-value"><select id="editClass" class="edit-input">${classOptionsHtml}</select></div></div>
+                <div class="detail-row"><div class="detail-label">Mobile No *:</div><div class="detail-value"><input type="text" id="editMobile" class="edit-input" value="${st.mobile}" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');"></div></div>
+                <div class="detail-row"><div class="detail-label">DOB *:</div><div class="detail-value"><input type="date" id="editDob" class="edit-input" value="${st.dob}"></div></div>
+                <div class="detail-row"><div class="detail-label">Email *:</div><div class="detail-value"><input type="email" id="editEmail" class="edit-input" value="${st.email}"></div></div>
+                <div class="detail-row"><div class="detail-label">Address *:</div><div class="detail-value"><textarea id="editAddress" class="edit-input" style="height:55px;">${st.address}</textarea></div></div>
+            `;
+
+            let footerHtml = `
+                <button class="btn-cancel-trigger" onclick="openDetailsModal('${studentId}')">Cancel</button>
+                <button class="btn-save-trigger" onclick="updateStudentProfile('${studentId}')"><i class="fas fa-save"></i> Save Changes</button>
+            `;
+
+            document.getElementById('modalDetailsBody').innerHTML = editHtml;
+            document.getElementById('modalFooter').innerHTML = footerHtml;
+        }
+
+        function updateStudentProfile(studentId) {
+            let regNo = document.getElementById('editRegNo').value.trim();
+            let name = document.getElementById('editName').value.trim();
+            let roll = document.getElementById('editRoll').value.trim();
+            let className = document.getElementById('editClass').value;
+            let mobile = document.getElementById('editMobile').value.trim();
+            let dob = document.getElementById('editDob').value;
+            let email = document.getElementById('editEmail').value.trim();
+            let address = document.getElementById('editAddress').value.trim();
+
+            if(!regNo || !name || !roll || !className || !mobile || !dob || !email || !address) {
+                alert("Error: All profile fields must be filled! None can be left empty.");
+                return;
+            }
+
+            // EDIT PROFILE STRICT 10 DIGIT CHECK
+            if(mobile.length !== 10) {
+                alert("Error: Mobile number must be exactly 10 digits long!");
+                return;
+            }
+
+            let students = JSON.parse(localStorage.getItem('attendanceStudents')) || [];
+            let index = students.findIndex(item => item.id === studentId);
+
+            if(index !== -1) {
+                students[index].regNo = regNo;
+                students[index].name = name;
+                students[index].roll = roll;
+                students[index].className = className;
+                students[index].mobile = mobile;
+                students[index].dob = dob;
+                students[index].email = email;
+                students[index].address = address;
+
+                localStorage.setItem('attendanceStudents', JSON.stringify(students));
+                alert("Student profile updated successfully!");
+                closeDetailsModal();
+                viewClassesOnly();
+            }
+        }
+
+        function closeDetailsModal() {
+            document.getElementById('studentDetailsModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            let modal = document.getElementById('studentDetailsModal');
+            if (event.target == modal) { modal.style.display = "none"; }
+        }
+
+        function setAttendanceStatus(studentId, statusValue) {
+            let targetDate = document.getElementById('attendanceDate').value;
+            let attendanceRecords = JSON.parse(localStorage.getItem('dailyAttendanceLogs')) || {};
+            
+            if(!attendanceRecords[targetDate]) { attendanceRecords[targetDate] = {}; }
+            if(!attendanceRecords[targetDate][studentId]) { attendanceRecords[targetDate][studentId] = { status: '', reason: '' }; }
+
+            attendanceRecords[targetDate][studentId].status = statusValue;
+            if(statusValue !== 'Absent') { attendanceRecords[targetDate][studentId].reason = ''; }
+
+            localStorage.setItem('dailyAttendanceLogs', JSON.stringify(attendanceRecords));
+            viewClassesOnly();
+        }
+
+        function saveAbsentReason(studentId, reasonText) {
+            let targetDate = document.getElementById('attendanceDate').value;
+            let attendanceRecords = JSON.parse(localStorage.getItem('dailyAttendanceLogs')) || {};
+
+            if(attendanceRecords[targetDate] && attendanceRecords[targetDate][studentId]) {
+                attendanceRecords[targetDate][studentId].reason = reasonText.trim();
+                localStorage.setItem('dailyAttendanceLogs', JSON.stringify(attendanceRecords));
+            }
+        }
+
+        function toggleStudentList(id) {
+            let element = document.getElementById(id);
+            if (element.style.display === "block") {
+                element.style.display = "none";
+                openFolders[id] = false;
+            } else {
+                element.style.display = "block";
+                openFolders[id] = true;
+            }
+        }
+    </script>
+</body>
+</html>

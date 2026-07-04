@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Attendance System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --secondary-color: #06b6d4;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--light-color); color: var(--dark-color); display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 400px; }
+        h2 { text-align: center; margin-top: 10px; margin-bottom: 25px; color: var(--primary-color); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 16px; }
+        button { background: var(--primary-color); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; width: 100%; transition: 0.3s; }
+        button:hover { background: #4338ca; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div style="text-align: center;">
+            <i class="fas fa-user-shield" style="font-size: 50px; color: var(--primary-color);"></i>
+        </div>
+        <h2>Admin Login</h2>
+        <div class="form-group">
+            <label>Username:</label>
+            <input type="text" id="username" placeholder="Enter admin username" value="admin">
+        </div>
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="password" placeholder="Enter password" value="password">
+        </div>
+        <button onclick="login()">Login</button>
+    </div>
+
+    <script>
+        function login() {
+            var user = document.getElementById('username').value.trim();
+            var pass = document.getElementById('password').value.trim();
+
+            // Check dynamic admins array from localStorage
+            let admins = JSON.parse(localStorage.getItem('savedAdmins')) || [];
+            let isValidNewAdmin = admins.some(a => a.user === user && a.pass === pass);
+
+            if((user === "admin" && pass === "password") || isValidNewAdmin) {
+                window.location.href = "home.html";
+            } else {
+                alert("Incorrect username or password! (Default: admin / password)");
+            }
+        }
+    </script>
+</body>
+</html>
