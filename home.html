@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,7 +41,7 @@
         <div class="logo"><i class="fas fa-school"></i> AMS 2026-27</div>
         <ul>
             <li><a href="home.html" class="active"><i class="fas fa-home"></i> Home</a></li>
-            <li><a href="index-page.html"><i class="fas fa-list"></i> Index Page</a></li>
+            <li><a href="index-page.html"><i class="fas fa-list"></i>Student attandance</a></li>
             <li><a href="settings.html"><i class="fas fa-cogs"></i> Settings & Complaints</a></li>
             <li><a href="index.html" style="background: var(--danger-color); border-radius: 20px;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
@@ -77,6 +79,7 @@
             let students = JSON.parse(localStorage.getItem('attendanceStudents')) || [];
             document.getElementById('dashClasses').innerText = `${classes.length} Registered`;
             document.getElementById('dashStudents').innerText = `${students.length} Registered`;
+       
         }
     </script>
 </body>
